@@ -8,7 +8,7 @@
         "framework",
         "react"
     ],
-    "description": "Abstract React forms with SSR and AJV JSONSchema support",
+    "description": "Abstract React forms with SSR and AJV JSON Schema support",
     "scripts": {
         "lint": "eslint .",
         "build": "npm run lint",
