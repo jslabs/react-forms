@@ -2,7 +2,7 @@
     "homepage": "https://github.com/jslabs/react-forms",
     "author": "Seht <dev@hyx.net> (https://seht.dev/)",
     "name": "@jslabs/react-forms",
-    "version": "0.0.2",
+    "version": "0.0.2a",
     "main": "index.js",
     "keywords": [
         "framework",
