@@ -84,15 +84,13 @@ class ExampleForm extends React.Component {
 
     render() {
         return (
-            <Layout profile={this.state}>
-                <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
-                    <h3>Example form</h3>
-                    <FormManager.Provider value={{ state: this.state, setState: this.stateHandler }}>
-                        <Form fields={formSchema.fields} schema={this.context.data.schema} />
-                    </FormManager.Provider>
-                    <button type="submit">Submit</button>
-                </form>
-            </Layout>
+            <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
+                <h3>Example form</h3>
+                <FormManager.Provider value={{ state: this.state, setState: this.stateHandler }}>
+                    <Form fields={formSchema.fields} schema={this.context.data.schema} />
+                </FormManager.Provider>
+                <button type="submit">Submit</button>
+            </form>
         );
     }
 }
