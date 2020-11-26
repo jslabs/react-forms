@@ -1,29 +1,33 @@
-type Hook = (field: IField, context: any) => void;
+type THook = (field: IField, context: any) => void; // @todo context type
+type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+type TFormMarkup = string | React.ElementType | Array<React.ElementType>;
 
 interface IField {
     label: string;
-    input: string;
+    input: React.ElementType;
     props: {
         [key: string]: any;
     }
-    prefix: any;
-    suffix: any;
-    prepend: any;
-    append: any;
-    markup: any;
-    template: any; // @todo
-    component: any; // @todo
-    schema: any; // @todo
-    hooks: Array<Hook>;
+    prefix: TFormMarkup;
+    suffix: TFormMarkup;
+    prepend: TFormMarkup;
+    append: TFormMarkup;
+    markup: TFormMarkup;
+    template: React.ElementType;
+    component: React.ElementType;
+    schema: IFieldSchema;
+    hooks: Array<THook>;
 }
 
 interface IFields {
     [key: string]: IField;
 }
 
-interface ISchema { 
-    properties: {
-        [key: string]: any; // @todo (Ajv)
-    }
+interface ISchema {
+    properties: IFieldSchema;
+    [key: string]: any; // @todo (Ajv)
+}
+
+interface IFieldSchema {
     [key: string]: any;
 }

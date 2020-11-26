@@ -2,20 +2,23 @@ import * as React from "react";
 import { InputTemplate, MarkupTemplate } from "./templates";
 
 // @todo context type
-export function FieldComponent({ name, field, context }: {name: string, field: IField, context: any}) {
+export function FieldComponent({ name, field, context }: { name: string, field: IField, context: any }) {
 
-    field.props = {...field.props, ...{
-        'name': name,
-        'id': name,
-    }}
+    field.props = {
+        ...field.props,
+        ...{
+            'name': name,
+            'id': name,
+        }
+    }
 
     if (context.state && name in context.state) {
         field.props.value = context.state[name];
     }
 
     if (!field.markup && !field.props.onChange && context) {
-        field.props.onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-            context.setState({[event.target.name]: event.target.value});
+        field.props.onChange = (event: React.ChangeEvent<TFormInput>) => {
+            context.setState({ [event.target.name]: event.target.value });
         }
     }
 
