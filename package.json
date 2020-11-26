@@ -3,7 +3,7 @@
     "author": "Seht <dev@hyx.net> (https://seht.dev/)",
     "name": "@jslabs/react-forms",
     "version": "0.1.0",
-    "main": "index.js",
+    "main": "dist/index.js",
     "keywords": [
         "framework",
         "react"
