@@ -5,7 +5,7 @@
 ### Premilinary docs (example)
 
 ```js
-// fields
+// ./schemas/ExampleForm.js (fields)
 import React from 'react';
 
 const selectFieldHook = (field, context) => {
@@ -44,15 +44,12 @@ export default {
 import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router';
 
-import Layout from '../../components/Layout';
-import DataContext from '../../contexts/DataContext';
-import formSchema from '../../schemas/admin/profile';
+import DataContext from './DataContext';
+import formSchema from './schemas/ExampleForm';
 
-import { Form, FormManager } from 'react-forms';
+import { Form, FormManager } from '@jslabs/react-forms';
 
 import axios from 'axios';
-
-import('../../assets/styles/profile.css');
 
 class ExampleForm extends React.Component {
 
