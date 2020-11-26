@@ -4,7 +4,7 @@
 
 ### Premilinary docs (example)
 
-```JS
+```js
 // fields
 import React from 'react';
 
@@ -39,7 +39,7 @@ export default {
 
 ```
 
-```JS
+```js
 // client
 import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router';
@@ -99,7 +99,7 @@ export default withRouter(ExampleForm);
 
 ```
 
-```JS
+```js
 // server
 const express = require('express')
 const Ajv = require("ajv").default
