@@ -12,28 +12,44 @@ const selectFieldHook = (field, context) => {
     field.props.children = Array.from(field.schema.enum).map(key => <option key={key} value={key}>{key}</option>);
 }
 
+const stateHook = (field, context) => {
+    field.props.onChange = (event) => {
+        context.setState({ [event.target.name]: event.target.value });
+    }
+}
+
 export default {
     title: "",
     fields: {
         example_text: {
             label: "Example text",
             element: 'textarea',
-
+            hooks: [stateHook],
         },
         example_input: {
             label: "Example input",
             element: 'input',
             props: {
                 type: 'text',
-            }
+                placeholder: "Example...",
+                // ...
+            },
+            hooks: [stateHook],
         },
         example_select: {
             label: "Select from SSR schema",
             element: 'select',
             props: {
-                value: 'default',
+                value: 'default', // Set default
             },
-            hooks: [selectFieldHook],
+            hooks: [
+                stateHook,
+                selectFieldHook,
+                (field, context) => {
+                    field.props.value = field.schema.enum[0]; // Override default ...
+                    context.setState({[field.props.name]: field.props.value});
+                }
+            ],
         },
     }
 };
