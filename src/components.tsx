@@ -2,7 +2,7 @@ import * as React from "react";
 import { InputTemplate, MarkupTemplate } from "./templates";
 
 // @todo context type
-export function FieldComponent({ name, field, context }: { name: string, field: IField, context: any }) {
+export function FieldComponent({ name, field, context }: { name: string, field: IField, context: IFormManagerContext }) {
 
     field.props = {
         ...field.props,
@@ -16,7 +16,9 @@ export function FieldComponent({ name, field, context }: { name: string, field: 
         field.props.value = context.state[name];
     }
 
-    if (!field.markup && !field.props.onChange && context) {
+    const value = field.props.value;
+
+    if (context && !field.markup && !field.props.onChange) {
         field.props.onChange = (event: React.ChangeEvent<TFormInput>) => {
             context.setState({ [event.target.name]: event.target.value });
         }
@@ -30,7 +32,10 @@ export function FieldComponent({ name, field, context }: { name: string, field: 
         for (const hook of Array.from(field.hooks)) {
             hook(field, context);
         }
+        if (context && value !== field.props.value) {
+            context.setState({ [field.props.name]: field.props.value });
+        }
     }
 
-    return (<field.template field={field} />);
+    return <field.template field={field} />;
 }

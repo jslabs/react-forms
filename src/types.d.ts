@@ -1,22 +1,18 @@
-type THook = (field: IField, context: any) => void; // @todo context type
-type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-type TFormMarkup = string | React.ElementType | Array<React.ElementType>;
-
 interface IField {
-    label: string;
-    input: React.ElementType;
+    element: React.ElementType;
+    component: React.ElementType;
+    template: React.ElementType;
     props: {
         [key: string]: any;
     }
+    label: string;
+    schema: IFieldSchema;
+    hooks: Array<THook>;
+    markup: TFormMarkup;
     prefix: TFormMarkup;
     suffix: TFormMarkup;
     prepend: TFormMarkup;
     append: TFormMarkup;
-    markup: TFormMarkup;
-    template: React.ElementType;
-    component: React.ElementType;
-    schema: IFieldSchema;
-    hooks: Array<THook>;
 }
 
 interface IFields {
@@ -31,3 +27,14 @@ interface ISchema {
 interface IFieldSchema {
     [key: string]: any;
 }
+
+interface IFormManagerContext {
+    state: React.ComponentState;
+    setState: React.SetStateAction<React.ComponentState>;
+    reducer: React.Reducer<React.ComponentState, React.ReducerAction<any>>;
+    dispatch: React.Dispatch<React.ReducerAction<any>>;
+}
+
+type THook = (field: IField, context: IFormManagerContext) => void;
+type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+type TFormMarkup = string | React.ElementType | Array<React.ElementType>;

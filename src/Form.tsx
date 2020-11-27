@@ -14,7 +14,7 @@ export function Form({ fields, schema }: { fields: IFields, schema: ISchema }) {
                             if (!field.component) {
                                 field.component = FieldComponent;
                             }
-                            return (<field.component key={name} name={name} field={field} context={context} />);
+                            return <field.component key={name} name={name} field={field} context={context} />;
                         })}
                     </React.Fragment>
                 );

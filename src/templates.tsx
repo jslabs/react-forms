@@ -5,10 +5,10 @@ export function InputTemplate({ field }: { field: IField }) {
     return (
         <React.Fragment>
             {field.prefix}
-            <div>
+            <div className="form-group">
                 {label}
                 {field.prepend}
-                <field.input {...field.props} />
+                <field.element {...field.props} />
                 {field.append}
             </div>
             {field.suffix}
