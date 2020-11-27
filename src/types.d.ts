@@ -2,9 +2,7 @@ interface IField {
     element: React.ElementType;
     component: React.ElementType;
     template: React.ElementType;
-    props: {
-        [key: string]: any;
-    }
+    props: React.PropsWithChildren<any>;
     label: string;
     schema: IFieldSchema;
     hooks: Array<THook>;

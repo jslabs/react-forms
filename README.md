@@ -17,18 +17,19 @@ export default {
     fields: {
         example_text: {
             label: "Example text",
-            input: 'textarea',
+            element: 'textarea',
+
         },
         example_input: {
             label: "Example input",
-            input: 'input',
+            element: 'input',
             props: {
                 type: 'text',
             }
         },
         example_select: {
             label: "Select from SSR schema",
-            input: 'select',
+            element: 'select',
             props: {
                 value: 'default',
             },
@@ -37,6 +38,24 @@ export default {
     }
 };
 
+```
+
+```js
+// field
+interface IField {
+    element: React.ElementType;
+    component: React.ElementType;
+    template: React.ElementType;
+    props: React.PropsWithChildren<any>;
+    label: string;
+    schema: IFieldSchema;
+    hooks: Array<THook>;
+    markup: TFormMarkup;
+    prefix: TFormMarkup;
+    suffix: TFormMarkup;
+    prepend: TFormMarkup;
+    append: TFormMarkup;
+}
 ```
 
 ```js
