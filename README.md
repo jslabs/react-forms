@@ -10,12 +10,18 @@ module.exports = {
     "additionalProperties": false,
     "type": "object",
     "properties": {
-        "checkbox_field_1": {
-            "type": "boolean"
+        "checkbox_field": {
+            "type": "array",
+            "items": { 
+                "type": "integer",
+            },
         },
-        "checkbox_field_2": {
-            "type": "boolean"
-        },
+        // "checkbox_field_1": {
+        //     "type": "boolean"
+        // },
+        // "checkbox_field_2": {
+        //     "type": "boolean"
+        // },
         "radio_field": {
             "type": "integer"
         },
@@ -39,7 +45,6 @@ module.exports = {
 ```js
 // ./schemas/ExampleForm.js
 import React from 'react';
-
 
 // Input hooks (state handling) ...
 const inputHook = (spec, context) => {
@@ -66,10 +71,20 @@ const checkedInputHook = (spec, context) => {
 
     } else if (spec.props.type === 'checkbox') {
 
-        spec.props.checked = (spec.props.name in context.state && context.state[spec.props.name]);
+        // Named check boxes...
+        // spec.props.checked = (spec.props.name in context.state && context.state[spec.props.name]);
+
+        // spec.props.onChange = (event) => {
+        //     context.setState({ [event.target.name]: event.target.checked });
+        // }
+
+        // Unamed checkboxes...
+        let values = (spec.props.name in context.state && context.state[spec.props.name]) ? context.state[spec.props.name] : [];
+        spec.props.checked = (values.includes(spec.props.value));
 
         spec.props.onChange = (event) => {
-            context.setState({ [event.target.name]: event.target.checked });
+            values = (event.target.checked) ? [...values, event.target.value] : values.filter(value => (value !== event.target.value));
+            context.setState({ [event.target.name]: values });
         }
 
     }
@@ -77,26 +92,37 @@ const checkedInputHook = (spec, context) => {
 }
 
 const selectOptionsHook = (spec, context) => {
-    spec.props.children = Array.from(spec.schema.enum).map(key => <option key={key} value={key}>{key}</option>);
+    spec.props.children = spec.schema.enum.map(key => <option key={key} value={key}>{key}</option>);
 }
 
 export default {
     checkbox_field: {
         group: [
             {
-                label: 'Checkbox 0',
+                label: "Checkbox 1",
                 element: 'input',
                 props: {
-                    name: 'checkbox_field_1',
                     type: 'checkbox',
+                    // name: 'checkbox_field_1',
+                    value: '1',  // Unamed
                 }
             },
             {
-                label: 'Checkbox 1',
+                label: "Checkbox 2",
                 element: 'input',
                 props: {
-                    name: 'checkbox_field_2',
                     type: 'checkbox',
+                    // name: 'checkbox_field_2',
+                    value: '2',
+                }
+            },
+            {
+                label: "Checkbox 3",
+                element: 'input',
+                props: {
+                    type: 'checkbox',
+                    // name: 'checkbox_field_3',
+                    value: '3',
                 }
             }
         ],
@@ -105,21 +131,19 @@ export default {
     radio_field: {
         group: [
             {
-                label: 'Radio 0',
+                label: "Radio 1",
                 element: 'input',
                 props: {
-                    // name: 'radio_field',
                     type: 'radio',
-                    value: 1,
+                    value: '1',
                 }
             },
             {
-                label: 'Radio 1',
+                label: "Radio 2",
                 element: 'input',
                 props: {
-                    // name: 'radio_field',
                     type: 'radio',
-                    value: 2,
+                    value: '2',
                 }
             }
         ],
@@ -216,7 +240,7 @@ class ExampleForm extends React.Component {
                     // @todo
                     alert(JSON.stringify(data.errors, null, 2));
                 } else {
-                    console.log("response body....", data.data);
+                    console.log("response...", data.data);
                 }
             })
             .catch(error => {
@@ -269,7 +293,7 @@ router.post('/example-form', async (req, res, next) => {
 
     const body = req.body || {}
 
-    const ajv = new Ajv({ coerceTypes: true })
+    const ajv = new Ajv({ coerceTypes: true })  // Type casting
     const validate = ajv.compile(exampleSchema)
     const valid = validate(body)
 
@@ -277,10 +301,6 @@ router.post('/example-form', async (req, res, next) => {
 
         // data was validated
     }
-
-    console.log('body....', body)
-    console.log('valid....', valid)
-    console.log('errors....', validate.errors)
 
     return res.json({
         data: body,
