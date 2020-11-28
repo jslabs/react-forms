@@ -1,6 +1,7 @@
 import * as React from "react";
 
 export function InputGroupTemplate({ spec, children }: { spec: IFormElementSpec, children: React.ReactNode }) {
+    // @todo
     return (
         <React.Fragment>
             {spec.prefix}
@@ -14,6 +15,7 @@ export function InputGroupTemplate({ spec, children }: { spec: IFormElementSpec,
 
 export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
     const label = (spec.label) ? <label htmlFor={spec.props.id}>{spec.label}</label> : null;
+    // @todo
     return (
         <InputGroupTemplate spec={spec}>
             <React.Fragment>
