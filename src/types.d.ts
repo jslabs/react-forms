@@ -1,11 +1,13 @@
-interface IField {
+interface IFormElementSpec {
+    key: string,
     element: React.ElementType;
-    component: React.ElementType;
     template: React.ElementType;
+    factory: TFormElementFactory;
+    group: Array<IFormElementSpec>;
+    schema: IFormElementDataSchema;
     props: React.PropsWithChildren<any>;
-    label: string;
-    schema: IFieldSchema;
     hooks: Array<THook>;
+    label: string;
     markup: TFormMarkup;
     prefix: TFormMarkup;
     suffix: TFormMarkup;
@@ -13,16 +15,15 @@ interface IField {
     append: TFormMarkup;
 }
 
-interface IFields {
-    [key: string]: IField;
+interface IFormSpec {
+    [key: string]: IFormElementSpec;
 }
 
-interface ISchema {
-    properties: IFieldSchema;
-    [key: string]: any; // @todo (Ajv)
+interface IFormDataSchema {  // (Ajv)
+    [key: string]: IFormElementDataSchema;
 }
 
-interface IFieldSchema {
+interface IFormElementDataSchema {
     [key: string]: any;
 }
 
@@ -33,6 +34,7 @@ interface IFormManagerContext {
     dispatch: React.Dispatch<React.ReducerAction<any>>;
 }
 
-type THook = (field: IField, context: IFormManagerContext) => void;
+type THook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 type TFormMarkup = string | React.ElementType | Array<React.ElementType>;
+type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;

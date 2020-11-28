@@ -5,72 +5,182 @@
 ### Premilinary docs (example)
 
 ```js
-// ./schemas/ExampleForm.js (fields)
-import React from 'react';
-
-const selectFieldHook = (field, context) => {
-    field.props.children = Array.from(field.schema.enum).map(key => <option key={key} value={key}>{key}</option>);
+// server/schemas/example.js
+module.exports = {
+    "additionalProperties": false,
+    "type": "object",
+    "properties": {
+        "checkbox_field_1": {
+            "type": "boolean"
+        },
+        "checkbox_field_2": {
+            "type": "boolean"
+        },
+        "radio_field": {
+            "type": "integer"
+        },
+        "example_text": {
+            "type": "string",
+            "maxLength": 300,
+        },
+        "example_input": {
+            "type": "string",
+            "pattern": "^123", // Starts with 123...
+        },
+        "example_select": { 
+            "type": "string",
+            "enum": ["default", "option1", "option2"] 
+        }
+    }
 }
 
-const stateHook = (field, context) => {
-    field.props.onChange = (event) => {
+```
+
+```js
+// ./schemas/ExampleForm.js
+import React from 'react';
+
+
+// Input hooks (state handling) ...
+const inputHook = (spec, context) => {
+
+    if (spec.props.name in context.state) {
+        spec.props.value = context.state[spec.props.name];  // Default value
+    }
+
+    spec.props.onChange = (event) => {
         context.setState({ [event.target.name]: event.target.value });
     }
+
+}
+
+const checkedInputHook = (spec, context) => {
+
+    if (spec.props.type === 'radio') {
+        
+        spec.props.checked = (spec.props.name in context.state && context.state[spec.props.name] === spec.props.value);
+        
+        spec.props.onChange = (event) => {
+            context.setState({ [event.target.name]: event.target.value });
+        }
+
+    } else if (spec.props.type === 'checkbox') {
+
+        spec.props.checked = (spec.props.name in context.state && context.state[spec.props.name]);
+
+        spec.props.onChange = (event) => {
+            context.setState({ [event.target.name]: event.target.checked });
+        }
+
+    }
+
+}
+
+const selectOptionsHook = (spec, context) => {
+    spec.props.children = Array.from(spec.schema.enum).map(key => <option key={key} value={key}>{key}</option>);
 }
 
 export default {
-    title: "",
-    fields: {
-        example_text: {
-            label: "Example text",
-            element: 'textarea',
-            hooks: [stateHook],
-        },
-        example_input: {
-            label: "Example input",
-            element: 'input',
-            props: {
-                type: 'text',
-                placeholder: "Example...",
-                // ...
-            },
-            hooks: [stateHook],
-        },
-        example_select: {
-            label: "Select from SSR schema",
-            element: 'select',
-            props: {
-                value: 'default', // Set default
-            },
-            hooks: [
-                stateHook,
-                selectFieldHook,
-                (field, context) => {
-                    field.props.value = field.schema.enum[0]; // Override default ...
-                    context.setState({[field.props.name]: field.props.value});
+    checkbox_field: {
+        group: [
+            {
+                label: 'Checkbox 0',
+                element: 'input',
+                props: {
+                    name: 'checkbox_field_1',
+                    type: 'checkbox',
                 }
-            ],
+            },
+            {
+                label: 'Checkbox 1',
+                element: 'input',
+                props: {
+                    name: 'checkbox_field_2',
+                    type: 'checkbox',
+                }
+            }
+        ],
+        hooks: [checkedInputHook]
+    },
+    radio_field: {
+        group: [
+            {
+                label: 'Radio 0',
+                element: 'input',
+                props: {
+                    // name: 'radio_field',
+                    type: 'radio',
+                    value: 1,
+                }
+            },
+            {
+                label: 'Radio 1',
+                element: 'input',
+                props: {
+                    // name: 'radio_field',
+                    type: 'radio',
+                    value: 2,
+                }
+            }
+        ],
+        hooks: [checkedInputHook]
+    },
+    example_text: {
+        label: "Example text",
+        element: 'textarea',
+        hooks: [stateHook],
+    },
+    example_input: {
+        label: "Example input",
+        element: 'input',
+        props: {
+            type: 'text',
+            placeholder: "Example...",
+            // ...
         },
-    }
+        hooks: [inputHook],
+    },
+    example_select: {
+        label: "Select from SSR schema",
+        element: 'select',
+        props: {
+            value: 'default', // Set default
+        },
+        hooks: [
+            inputHook,
+            selectOptionsHook,
+            (field, context) => {
+                field.props.value = field.schema.enum[0]; // Override default ...
+                context.setState({[field.props.name]: field.props.value});
+            }
+        ],
+    },
 };
 
 ```
 
 ```js
-// field
-interface IField {
-    element: React.ElementType;
-    component: React.ElementType;
-    template: React.ElementType;
+// Form elements options
+interface IFormElementSpec {
+    element: React.ElementType; // element or string
+    template: React.ElementType; // override default template
+    factory: TFormElementFactory; // override element factory
+    schema: IFormElementDataSchema;
     props: React.PropsWithChildren<any>;
-    label: string;
-    schema: IFieldSchema;
     hooks: Array<THook>;
-    markup: TFormMarkup;
-    prefix: TFormMarkup;
-    suffix: TFormMarkup;
-    prepend: TFormMarkup;
-    append: TFormMarkup;
+    label: string;
+    markup: TFormMarkup; // markup vs element
+    prefix: TFormMarkup; // before element form group
+    suffix: TFormMarkup; // after element form group
+    prepend: TFormMarkup; // before input
+    append: TFormMarkup; // after input
+}
+// Form manager context
+interface IFormManagerContext {
+    state: React.ComponentState;
+    setState: React.SetStateAction<React.ComponentState>;
+    reducer: React.Reducer<React.ComponentState, React.ReducerAction<any>>;
+    dispatch: React.Dispatch<React.ReducerAction<any>>;
 }
 ```
 
@@ -80,7 +190,7 @@ import React, { useContext, useState } from 'react';
 import { withRouter } from 'react-router';
 
 import DataContext from './DataContext';
-import formSchema from './schemas/ExampleForm';
+import formSpecs from './schemas/ExampleForm';
 
 import { Form, FormManager } from '@jslabs/react-forms';
 
@@ -106,7 +216,7 @@ class ExampleForm extends React.Component {
                     // @todo
                     alert(JSON.stringify(data.errors, null, 2));
                 } else {
-                    console.log('response body....', data.data);
+                    console.log("response body....", data.data);
                 }
             })
             .catch(error => {
@@ -119,7 +229,7 @@ class ExampleForm extends React.Component {
             <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
                 <h3>Example form</h3>
                 <FormManager.Provider value={{ state: this.state, setState: this.stateHandler }}>
-                    <Form fields={formSchema.fields} schema={this.context.data.schema} />
+                    <Form specs={formSpecs} schema={this.context.data.schema['properties']} />
                 </FormManager.Provider>
                 <button type="submit">Submit</button>
             </form>
@@ -134,7 +244,7 @@ export default withRouter(ExampleForm);
 ```js
 // server
 const express = require('express')
-const Ajv = require("ajv").default
+const Ajv = require('ajv').default
 
 const router = express.Router()
 
