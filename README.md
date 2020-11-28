@@ -128,7 +128,7 @@ export default {
     example_text: {
         label: "Example text",
         element: 'textarea',
-        hooks: [stateHook],
+        hooks: [inputHook],
     },
     example_input: {
         label: "Example input",
