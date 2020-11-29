@@ -95,16 +95,28 @@ const selectOptionsHook = (spec, context) => {
     spec.props.children = spec.schema.enum.map(key => <option key={key} value={key}>{key}</option>);
 }
 
+const ExampleGroupTemplate = ({ children, spec }) => {
+    return (
+        <fieldset>
+            <legend>{spec.data?.legend || spec.label}</legend>
+            {children}
+        </fieldset>
+    );
+}
+
 export default {
     checkbox_field: {
+        label: "Les checkboxes",
+        templates: {
+            group: ExampleGroupTemplate,
+        },
         group: [
             {
                 label: "Checkbox 1",
                 element: 'input',
                 props: {
                     type: 'checkbox',
-                    // name: 'checkbox_field_1',
-                    value: '1',  // Unamed
+                    value: '1',
                 }
             },
             {
@@ -112,7 +124,6 @@ export default {
                 element: 'input',
                 props: {
                     type: 'checkbox',
-                    // name: 'checkbox_field_2',
                     value: '2',
                 }
             },
@@ -121,7 +132,6 @@ export default {
                 element: 'input',
                 props: {
                     type: 'checkbox',
-                    // name: 'checkbox_field_3',
                     value: '3',
                 }
             }
@@ -136,6 +146,9 @@ export default {
                 props: {
                     type: 'radio',
                     value: '1',
+                },
+                templates: {
+                    group: true,  // True (default component) or Component - wrap group elements. (default: false)
                 }
             },
             {
@@ -144,15 +157,39 @@ export default {
                 props: {
                     type: 'radio',
                     value: '2',
+                },
+                templates: {
+                    group: true,
                 }
             }
         ],
+        templates: {
+            group: false,  // Disable default wrapping outside group (default: true)
+        },
         hooks: [checkedInputHook]
     },
     example_text: {
         label: "Example text",
         element: 'textarea',
-        hooks: [inputHook],
+        hooks: [
+            inputHook,
+            (spec, context) => {
+                spec.data = {
+                    legend: "Override data hook...",
+                }
+                spec.append = ({ spec }) => <div>Error...</div>
+            }
+        ],
+        data: {
+            legend: "Example data...",
+        },
+        templates: {
+            group: ExampleGroupTemplate,
+        },
+        append: ({ spec }) => <div>Appended...</div>,
+    },
+    example_markup: {
+        html: ({ spec }) => <pre>Example markup...</pre>,
     },
     example_input: {
         label: "Example input",
@@ -186,18 +223,19 @@ export default {
 ```js
 // Form elements options
 interface IFormElementSpec {
-    element: React.ElementType; // element or string
-    template: React.ElementType; // override default template
-    factory: TFormElementFactory; // override element factory
+    key: string;
+    group: Array<IFormElementSpec>;
+    element: React.ElementType;
+    factory: TFormElementFactory;
+    templates: IFormTemplates;
     schema: IFormElementDataSchema;
     props: React.PropsWithChildren<any>;
     hooks: Array<THook>;
     label: string;
-    markup: TFormMarkup; // markup vs element
-    prefix: TFormMarkup; // before element form group
-    suffix: TFormMarkup; // after element form group
-    prepend: TFormMarkup; // before input
-    append: TFormMarkup; // after input
+    data: any;
+    prepend: React.ElementType;
+    append: React.ElementType;
+    html: React.ElementType;
 }
 // Form manager context
 interface IFormManagerContext {

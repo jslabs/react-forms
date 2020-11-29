@@ -1,39 +1,31 @@
 import * as React from "react";
 
-export function InputGroupTemplate({ spec, children }: { spec: IFormElementSpec, children: React.ReactNode }) {
-    // @todo
+export function ElementGroupTemplate({ children, spec }: { children: React.ReactChildren, spec: IFormElementSpec }) {
     return (
-        <React.Fragment>
-            {spec.prefix}
-            <div>
-                {children}
-            </div>
-            {spec.suffix}
-        </React.Fragment>
+        <div>
+            {children}
+        </div>
     );
 }
 
 export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
     const label = (spec.label) ? <label htmlFor={spec.props.id}>{spec.label}</label> : null;
-    // @todo
+    const prepend = (spec.prepend) ? <spec.prepend spec={spec} /> : null;
+    const append = (spec.append) ? <spec.append spec={spec} /> : null;
     return (
-        <InputGroupTemplate spec={spec}>
-            <React.Fragment>
-                {label}
-                {spec.prepend}
-                <spec.element {...spec.props} />
-                {spec.append}
-            </React.Fragment>
-        </InputGroupTemplate>
+        <React.Fragment>
+            {label}
+            {prepend}
+            <spec.element {...spec.props} />
+            {append}
+        </React.Fragment>
     );
 }
 
-export function MarkupTemplate({ spec }: { spec: IFormElementSpec }) {
+export function HtmlTemplate({ spec }: { spec: IFormElementSpec }) {
     return (
         <React.Fragment>
-            {spec.prefix}
-            {spec.markup}
-            {spec.suffix}
+            <spec.html  spec={spec} />
         </React.Fragment>
     );
 }

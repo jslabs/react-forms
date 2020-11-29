@@ -1,5 +1,5 @@
 import * as React from "react";
-import { InputTemplate, MarkupTemplate } from "./templates";
+import { InputTemplate, HtmlTemplate, ElementGroupTemplate } from "./templates";
 
 export function FormElementFactory(spec: IFormElementSpec, context: IFormManagerContext) {
 
@@ -11,8 +11,16 @@ export function FormElementFactory(spec: IFormElementSpec, context: IFormManager
         ...spec.props,
     }
 
-    if (!spec.template) {
-        spec.template = (!spec.markup) ? InputTemplate : MarkupTemplate;
+    if (!spec.templates) {
+        spec.templates = { element: null, group: true };
+    }
+
+    if (!spec.templates?.element) {
+        spec.templates.element = (!spec.html) ? InputTemplate : HtmlTemplate;
+    }
+
+    if ((!spec.templates?.group && spec.templates?.group !== false) || spec.templates?.group === true) {
+        spec.templates.group = ElementGroupTemplate;
     }
 
     if (spec.hooks) {
@@ -21,13 +29,27 @@ export function FormElementFactory(spec: IFormElementSpec, context: IFormManager
         }
     }
 
-    return <spec.template spec={spec} />;
+    let children = <spec.templates.element key={spec.key} spec={spec} />;
+
+    if (spec.templates?.group) {
+        return <spec.templates.group children={children} spec={spec} />;
+    }
+
+    return children;
 
 }
 
 export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormManagerContext) {
 
-    return spec.group.map((element, index) => {
+    if (!spec.templates) {
+        spec.templates = { element: null, group: true };
+    }
+
+    if ((!spec.templates?.group && spec.templates?.group !== false) || spec.templates?.group === true) {
+        spec.templates.group = ElementGroupTemplate;
+    }
+
+    let children = spec.group.map((element, index) => {
 
         element.props = {
             ...{
@@ -38,20 +60,42 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
             ...element.props,
         }
 
-        if (!element.template) {
-            element.template = (spec.template) ? spec.template : ((!element.markup) ? InputTemplate : MarkupTemplate);
+        element.key = element.props.id;
+
+        if (!element.templates) {
+            element.templates = { element: null, group: false };
+        }
+
+        if (!element.templates?.element) {
+            element.templates.element = (spec.templates?.element) ? spec.templates.element : ((!element.html) ? InputTemplate : HtmlTemplate);
+        }
+
+        if (element.templates?.group === true) {
+            element.templates.group = ElementGroupTemplate;
         }
 
         element.hooks = [...spec.hooks || [], ...element.hooks || []]
-        
+
         if (element.hooks.length) {
             for (const hook of element.hooks) {
                 hook(element, context);
             }
         }
 
-        return <element.template key={element.props.id} spec={element} />;
+        let _children = <element.templates.element key={element.key} spec={element} />;
+
+        if (element.templates?.group) {
+            return <element.templates.group key={element.key} children={_children} spec={element} />;
+        }
+
+        return _children;
 
     });
+
+    if (spec.templates?.group) {
+        return <spec.templates.group children={children} spec={spec} />;
+    }
+
+    return children;
 
 }

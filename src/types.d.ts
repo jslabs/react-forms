@@ -1,18 +1,17 @@
 interface IFormElementSpec {
-    key: string,
-    element: React.ElementType;
-    template: React.ElementType;
-    factory: TFormElementFactory;
+    key: string;
     group: Array<IFormElementSpec>;
+    element: React.ElementType;
+    factory: TFormElementFactory;
+    templates: IFormTemplates;
     schema: IFormElementDataSchema;
     props: React.PropsWithChildren<any>;
     hooks: Array<THook>;
     label: string;
-    markup: TFormMarkup;
-    prefix: TFormMarkup;
-    suffix: TFormMarkup;
-    prepend: TFormMarkup;
-    append: TFormMarkup;
+    data: any;
+    prepend: React.ElementType;
+    append: React.ElementType;
+    html: React.ElementType;
 }
 
 interface IFormSpec {
@@ -34,7 +33,11 @@ interface IFormManagerContext {
     dispatch: React.Dispatch<React.ReducerAction<any>>;
 }
 
+interface IFormTemplates {
+    element: React.ElementType;
+    group: React.ElementType | boolean;
+}
+
 type THook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-type TFormMarkup = string | React.ElementType | Array<React.ElementType>;
 type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;

@@ -17,7 +17,11 @@ export function Form({ specs, schema }: { specs: IFormSpec, schema: IFormDataSch
                             if (!spec.factory) {
                                 spec.factory = (!spec.group) ? FormElementFactory : FormElementGroupFactory;
                             }
-                            return <React.Fragment key={key}>{spec.factory(spec, context)}</React.Fragment>;
+                            return (
+                                <React.Fragment key={key}>
+                                    {spec.factory(spec, context)}
+                                </React.Fragment>
+                            );
                         })}
                     </React.Fragment>
                 );
