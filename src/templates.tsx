@@ -1,5 +1,9 @@
 import * as React from "react";
 
+export function node(element: React.ElementType, props: TTemplateProps, empty: boolean = false) {
+    return (element && !("children" in props && !props.children && empty === false)) ? React.createElement(element, props) : null;
+}
+
 export function ElementGroupTemplate({ children, spec }: { children: React.ReactChildren, spec: IFormElementSpec }) {
     return (
         <div>
@@ -9,15 +13,12 @@ export function ElementGroupTemplate({ children, spec }: { children: React.React
 }
 
 export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
-    const label = (spec.label) ? <label htmlFor={spec.props.id}>{spec.label}</label> : null;
-    const prepend = (spec.prepend) ? <spec.prepend spec={spec} /> : null;
-    const append = (spec.append) ? <spec.append spec={spec} /> : null;
     return (
         <React.Fragment>
-            {label}
-            {prepend}
-            <spec.element {...spec.props} />
-            {append}
+            {node("label", { children: spec.label, htmlFor: spec.props.id })}
+            {node(spec.prepend, { spec })}
+            {React.createElement(spec.element, spec.props)}
+            {node(spec.append, { spec })}
         </React.Fragment>
     );
 }
@@ -25,7 +26,7 @@ export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
 export function HtmlTemplate({ spec }: { spec: IFormElementSpec }) {
     return (
         <React.Fragment>
-            <spec.html  spec={spec} />
+            {node(spec.html, { spec })}
         </React.Fragment>
     );
 }

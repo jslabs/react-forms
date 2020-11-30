@@ -5,7 +5,7 @@ interface IFormElementSpec {
     factory: TFormElementFactory;
     templates: IFormTemplates;
     schema: IFormElementDataSchema;
-    props: React.PropsWithChildren<any>;
+    props: TElementProps;
     hooks: Array<THook>;
     label: string;
     data: any;
@@ -38,6 +38,8 @@ interface IFormTemplates {
     group: React.ElementType | boolean;
 }
 
+type TElementProps = React.PropsWithRef<any>;
+type TTemplateProps = React.PropsWithoutRef<any>;
 type THook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;

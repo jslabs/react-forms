@@ -5,8 +5,8 @@ export function FormElementFactory(spec: IFormElementSpec, context: IFormManager
 
     spec.props = {
         ...{
-            'name': spec.key,
-            'id': spec.props?.name || spec.key,
+            "name": spec.key,
+            "id": spec.props?.name || spec.key,
         },
         ...spec.props,
     }
@@ -23,19 +23,19 @@ export function FormElementFactory(spec: IFormElementSpec, context: IFormManager
         spec.templates.group = ElementGroupTemplate;
     }
 
-    if (spec.hooks) {
+    if (spec.hooks && spec.hooks.length) {
         for (const hook of spec.hooks) {
             hook(spec, context);
         }
     }
 
-    let children = <spec.templates.element key={spec.key} spec={spec} />;
+    let element = React.createElement(spec.templates.element, {spec});
 
     if (spec.templates?.group) {
-        return <spec.templates.group children={children} spec={spec} />;
+        return React.createElement(spec.templates.group, {spec}, element);
     }
 
-    return children;
+    return element;
 
 }
 
@@ -49,12 +49,12 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
         spec.templates.group = ElementGroupTemplate;
     }
 
-    let children = spec.group.map((element, index) => {
+    let elements = spec.group.map((element, index) => {
 
         element.props = {
             ...{
-                'name': spec.key,
-                'id': (element.props?.name || spec.key) + `_${index}`,
+                "name": spec.key,
+                "id": (element.props?.name || spec.key) + `_${index}`,
             },
             ...spec.props,
             ...element.props,
@@ -74,7 +74,7 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
             element.templates.group = ElementGroupTemplate;
         }
 
-        element.hooks = [...spec.hooks || [], ...element.hooks || []]
+        element.hooks = [...spec.hooks || [], ...element.hooks || []];
 
         if (element.hooks.length) {
             for (const hook of element.hooks) {
@@ -82,20 +82,25 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
             }
         }
 
-        let _children = <element.templates.element key={element.key} spec={element} />;
+        let template = element.templates.element;
+        let props: TElementProps = { spec: element };
+        let children: React.ReactChild = null;
 
         if (element.templates?.group) {
-            return <element.templates.group key={element.key} children={_children} spec={element} />;
+            children = React.createElement(template, props);
+            template = element.templates.group;
         }
 
-        return _children;
+        props.key = element.key;
+
+        return React.createElement(template, props, children);
 
     });
 
     if (spec.templates?.group) {
-        return <spec.templates.group children={children} spec={spec} />;
+        return React.createElement(spec.templates.group, {spec}, elements);
     }
 
-    return children;
+    return elements;
 
 }
