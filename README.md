@@ -1,6 +1,6 @@
 # @jslabs/react-forms
 
-## Abstract React forms with SSR and AJV JSON Schema support
+## Abstract React forms with server-side JSON Schema validation support (Ajv)
 
 ### Premilinary docs (example)
 
