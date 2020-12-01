@@ -197,7 +197,19 @@ export default {
                     type: 'number',
                     value: 0,
                 },
-                hooks: [inputHook]
+                hooks: [
+                    (spec, context) => {
+                        // Default value
+                        if (!(spec.props.name in context.state)) {
+                            context.state[spec.props.name] = spec.props.value;
+                        } else {
+                            spec.props.value = context.state[spec.props.name];
+                        }
+                        spec.props.onChange = (event) => {
+                            // Handled by reducer...
+                        }
+                    }
+                ],
             },
             {
                 element: 'button',
