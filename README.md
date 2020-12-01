@@ -46,44 +46,37 @@ module.exports = {
 // ./schemas/ExampleForm.js
 import React from 'react';
 
-// Input hooks (state handling) ...
-const inputHook = (spec, context) => {
+const inputHook = ({ props }, context) => {
+
     // Default value
-    if (spec.props.name in context.state) {
-        spec.props.value = context.state[spec.props.name];
-    } else if ('value' in spec.props) {
-        context.state[spec.props.name] = spec.props.value;
+    if (props.name in context.state) {
+        props.value = context.state[props.name];
+    } else if ('value' in props) {
+        context.state[props.name] = props.value;
     }
 
-    spec.props.onChange = (event) => {
+    props.onChange = (event) => {
         context.setState({ [event.target.name]: event.target.value });
     }
+
 }
 
-const checkedInputHook = (spec, context) => {
+const checkedInputHook = ({ props }, context) => {
 
-    if (spec.props.type === 'radio') {
-        
-        spec.props.checked = (spec.props.name in context.state && context.state[spec.props.name] === spec.props.value);
-        
-        spec.props.onChange = (event) => {
+    if (props.type === 'radio') {
+
+        props.checked = (props.name in context.state && context.state[props.name] === props.value);
+
+        props.onChange = (event) => {
             context.setState({ [event.target.name]: event.target.value });
         }
 
-    } else if (spec.props.type === 'checkbox') {
+    } else if (props.type === 'checkbox') {
 
-        // Named check boxes...
-        // spec.props.checked = (spec.props.name in context.state && context.state[spec.props.name]);
+        let values = (props.name in context.state && context.state[props.name]) ? context.state[props.name] : [];
+        props.checked = (values.includes(props.value));
 
-        // spec.props.onChange = (event) => {
-        //     context.setState({ [event.target.name]: event.target.checked });
-        // }
-
-        // Unamed checkboxes...
-        let values = (spec.props.name in context.state && context.state[spec.props.name]) ? context.state[spec.props.name] : [];
-        spec.props.checked = (values.includes(spec.props.value));
-
-        spec.props.onChange = (event) => {
+        props.onChange = (event) => {
             values = (event.target.checked) ? [...values, event.target.value] : values.filter(value => (value !== event.target.value));
             context.setState({ [event.target.name]: values });
         }
@@ -92,8 +85,8 @@ const checkedInputHook = (spec, context) => {
 
 }
 
-const selectOptionsHook = (spec, context) => {
-    spec.props.children = spec.schema.enum.map(key => <option key={key} value={key}>{key}</option>);
+const selectOptionsHook = ({ props, schema }, context) => {
+    props.children = schema.enum.map(key => <option key={key} value={key}>{key}</option>);
 }
 
 const ExampleGroupTemplate = ({ children, spec }) => {
@@ -183,8 +176,8 @@ export default {
                     children: 'Decrease',
                 },
                 hooks: [
-                    (spec, context) => {
-                        spec.props.onClick = (event) => {
+                    ({ props }, context) => {
+                        props.onClick = (event) => {
                             context.dispatch({ type: 'decrease' })
                         }
                     }
@@ -198,15 +191,15 @@ export default {
                     value: 0,
                 },
                 hooks: [
-                    (spec, context) => {
+                    ({ props }, context) => {
                         // Default value
-                        if (!(spec.props.name in context.state)) {
-                            context.state[spec.props.name] = spec.props.value;
+                        if (!(props.name in context.state)) {
+                            context.state[props.name] = props.value;
                         } else {
-                            spec.props.value = context.state[spec.props.name];
+                            props.value = context.state[props.name];
                         }
-                        spec.props.onChange = (event) => {
-                            // Handled by reducer...
+                        props.onChange = (event) => {
+                            // handled by reducer...
                         }
                     }
                 ],
@@ -219,8 +212,8 @@ export default {
                     children: 'Increase',
                 },
                 hooks: [
-                    (spec, context) => {
-                        spec.props.onClick = (event) => {
+                    ({ props }, context) => {
+                        props.onClick = (event) => {
                             context.dispatch({ type: 'increase' })
                         }
                     }
