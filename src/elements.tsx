@@ -29,10 +29,10 @@ export function FormElementFactory(spec: IFormElementSpec, context: IFormManager
         }
     }
 
-    let element = React.createElement(spec.templates.element, {spec});
+    let element = React.createElement(spec.templates.element, { spec });
 
     if (spec.templates?.group) {
-        return React.createElement(spec.templates.group, {spec}, element);
+        return React.createElement(spec.templates.group, { spec }, element);
     }
 
     return element;
@@ -98,7 +98,7 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
     });
 
     if (spec.templates?.group) {
-        return React.createElement(spec.templates.group, {spec}, elements);
+        return React.createElement(spec.templates.group, { spec }, elements);
     }
 
     return elements;

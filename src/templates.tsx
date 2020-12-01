@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function node(element: React.ElementType, props: TTemplateProps, empty: boolean = false) {
+export const node = (element: React.ElementType, props: TElementProps, empty: boolean = false): React.ReactNode => {
     return (element && !("children" in props && !props.children && empty === false)) ? React.createElement(element, props) : null;
 }
 

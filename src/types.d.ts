@@ -3,10 +3,10 @@ interface IFormElementSpec {
     group: Array<IFormElementSpec>;
     element: React.ElementType;
     factory: TFormElementFactory;
-    templates: IFormTemplates;
+    templates: IFormElementTemplates;
     schema: IFormElementDataSchema;
     props: TElementProps;
-    hooks: Array<THook>;
+    hooks: Array<TFormElementHook>;
     label: string;
     data: any;
     prepend: React.ElementType;
@@ -18,7 +18,8 @@ interface IFormSpec {
     [key: string]: IFormElementSpec;
 }
 
-interface IFormDataSchema {  // (Ajv)
+interface IFormDataSchema {
+    // @todo Schemas types (Ajv)
     [key: string]: IFormElementDataSchema;
 }
 
@@ -33,13 +34,13 @@ interface IFormManagerContext {
     dispatch: React.Dispatch<React.ReducerAction<any>>;
 }
 
-interface IFormTemplates {
+interface IFormElementTemplates {
     element: React.ElementType;
     group: React.ElementType | boolean;
 }
 
-type TElementProps = React.PropsWithRef<any>;
-type TTemplateProps = React.PropsWithoutRef<any>;
-type THook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
-type TFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+type TElementProps = React.PropsWithRef<any> | React.PropsWithChildren<any>;
+// type TInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
+type TFormElementHook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;

@@ -48,15 +48,16 @@ import React from 'react';
 
 // Input hooks (state handling) ...
 const inputHook = (spec, context) => {
-
+    // Default value
     if (spec.props.name in context.state) {
-        spec.props.value = context.state[spec.props.name];  // Default value
+        spec.props.value = context.state[spec.props.name];
+    } else if ('value' in spec.props) {
+        context.state[spec.props.name] = spec.props.value;
     }
 
     spec.props.onChange = (event) => {
         context.setState({ [event.target.name]: event.target.value });
     }
-
 }
 
 const checkedInputHook = (spec, context) => {
@@ -168,6 +169,53 @@ export default {
         },
         hooks: [checkedInputHook]
     },
+    example_widget: {
+        label: "Reducer widget...",
+        templates: {
+            group: ExampleGroupTemplate,
+        },
+        group: [
+            {
+                element: 'button',
+                props: {
+                    name: null,
+                    type: 'button',
+                    children: 'Decrease',
+                },
+                hooks: [
+                    (spec, context) => {
+                        spec.props.onClick = (event) => {
+                            context.dispatch({ type: 'decrease' })
+                        }
+                    }
+                ]
+            },
+            {
+                element: 'input',
+                props: {
+                    name: 'example_widget_count',
+                    type: 'number',
+                    value: 0,
+                },
+                hooks: [inputHook]
+            },
+            {
+                element: 'button',
+                props: {
+                    name: null,
+                    type: 'button',
+                    children: 'Increase',
+                },
+                hooks: [
+                    (spec, context) => {
+                        spec.props.onClick = (event) => {
+                            context.dispatch({ type: 'increase' })
+                        }
+                    }
+                ]
+            },
+        ],
+    },
     example_text: {
         label: "Example text",
         element: 'textarea',
@@ -267,6 +315,22 @@ class ExampleForm extends React.Component {
         this.state = context.data.data || {};
         this.submitHandler = this.handleSubmit.bind(this);
         this.stateHandler = this.setState.bind(this);
+        this.reducer = this.reducer.bind(this);
+    }
+
+    reducerAction(state, action) {
+        switch (action.type) {
+          case 'increase':
+            return { ...state, example_widget_count: state.example_widget_count + 1 };
+          case 'decrease':
+            return { ...state, example_widget_count: state.example_widget_count - 1 };
+          default:
+            return state;
+        }
+    }
+
+    reducer(action) {
+        this.setState(this.reducerAction(this.state, action));
     }
 
     handleSubmit(event) {
@@ -278,7 +342,8 @@ class ExampleForm extends React.Component {
                     // @todo
                     alert(JSON.stringify(data.errors, null, 2));
                 } else {
-                    console.log("response...", data.data);
+                    console.log('response body....', data.data);
+                    this.setState(data.data);
                 }
             })
             .catch(error => {
@@ -287,14 +352,19 @@ class ExampleForm extends React.Component {
     }
 
     render() {
+        const dispatch = (action) => {
+            this.reducer(action);
+        }
         return (
-            <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
-                <h3>Example form</h3>
-                <FormManager.Provider value={{ state: this.state, setState: this.stateHandler }}>
-                    <Form specs={formSpecs} schema={this.context.data.schema['properties']} />
-                </FormManager.Provider>
-                <button type="submit">Submit</button>
-            </form>
+            <Layout profile={this.state}>
+                <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
+                    <h3>Profile settings</h3>
+                    <FormManager.Provider value={{ state: this.state, setState: this.stateHandler, reducer: this.reducer, dispatch }}>
+                        <Form specs={formSchema} schema={this.context.data.schema['properties']} />
+                    </FormManager.Provider>
+                    <button type="submit">Submit</button>
+                </form>
+            </Layout>
         );
     }
 }
