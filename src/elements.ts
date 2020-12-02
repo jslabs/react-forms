@@ -4,10 +4,7 @@ import { InputTemplate, HtmlTemplate, ElementGroupTemplate } from "./templates";
 export function FormElementFactory(spec: IFormElementSpec, context: IFormManagerContext) {
 
     spec.props = {
-        ...{
-            "name": spec.key,
-            "id": spec.props?.name || spec.key,
-        },
+        "name": spec.key,
         ...spec.props,
     }
 
@@ -52,15 +49,12 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
     let elements = spec.group.map((element, index) => {
 
         element.props = {
-            ...{
-                "name": spec.key,
-                "id": (element.props?.name || spec.key) + `_${index}`,
-            },
+            "name": spec.key,
             ...spec.props,
             ...element.props,
         }
 
-        element.key = element.props.id;
+        element.key = (element.props.name || spec.key) + index;
 
         if (!element.templates) {
             element.templates = { element: null, group: false };

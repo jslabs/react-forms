@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export const node = (element: React.ElementType, props: TElementProps, empty: boolean = false): React.ReactNode => {
+export const node = (element: TElement, props: TElementProps, empty: boolean = false): React.ReactNode => {
     return (element && !("children" in props && !props.children && empty === false)) ? React.createElement(element, props) : null;
 }
 
@@ -13,6 +13,9 @@ export function ElementGroupTemplate({ children, spec }: { children: React.React
 }
 
 export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
+    if (spec.label && !spec.props.id) {
+        spec.props.id = spec.key;
+    }
     return (
         <React.Fragment>
             {node("label", { children: spec.label, htmlFor: spec.props.id })}

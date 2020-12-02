@@ -1,17 +1,17 @@
 interface IFormElementSpec {
     key: string;
-    group: Array<IFormElementSpec>;
-    element: React.ElementType;
-    factory: TFormElementFactory;
-    templates: IFormElementTemplates;
-    schema: IFormElementDataSchema;
-    props: TElementProps;
-    hooks: Array<TFormElementHook>;
-    label: string;
-    data: any;
-    prepend: React.ElementType;
-    append: React.ElementType;
-    html: React.ElementType;
+    element: TElement;
+    group?: Array<IFormElementSpec>;
+    factory?: TFormElementFactory;
+    templates?: IFormElementTemplates;
+    schema?: IFormElementDataSchema;
+    props?: TElementProps;
+    hooks?: Array<TFormElementHook>;
+    label?: string;
+    data?: any;
+    prepend?: React.ElementType;
+    append?: React.ElementType;
+    html?: React.ElementType;
 }
 
 interface IFormSpec {
@@ -32,25 +32,20 @@ interface IFormState {
 }
 
 interface IFormManagerContext {
-    state: React.ComponentState;
-    setState: React.SetStateAction<React.ComponentState>;
-    reducer: React.Reducer<React.ComponentState, React.ReducerAction<any>>;
-    dispatch: React.Dispatch<React.ReducerAction<any>>;
+    state?: React.ComponentState;
+    setState?: React.SetStateAction<React.ComponentState>;
+    reducer?: React.Reducer<React.ComponentState, React.ReducerAction<any>>;
+    dispatch?: React.Dispatch<React.ReducerAction<any>>;
 }
 
 interface IFormElementTemplates {
-    element: React.ElementType;
-    group: React.ElementType | boolean;
+    element?: React.ElementType;
+    group?: React.ElementType | boolean;
 }
 
+type TElement = React.ElementType;
 type TElementProps = React.PropsWithRef<any> | React.PropsWithChildren<any>;
 // type TInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
 type TFormElementHook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;
-
-type TPartialFormSpec = {
-    [key: string]: TPartialElementSpec;
-}
-
-type TPartialElementSpec = Partial<IFormElementSpec> & Pick<IFormElementSpec, "key">;
