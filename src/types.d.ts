@@ -27,6 +27,10 @@ interface IFormElementDataSchema {
     [key: string]: any;
 }
 
+interface IFormState {
+    [key: string]: any;
+}
+
 interface IFormManagerContext {
     state: React.ComponentState;
     setState: React.SetStateAction<React.ComponentState>;
@@ -44,3 +48,9 @@ type TElementProps = React.PropsWithRef<any> | React.PropsWithChildren<any>;
 
 type TFormElementHook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;
+
+type TPartialFormSpec = {
+    [key: string]: TPartialElementSpec;
+}
+
+type TPartialElementSpec = Partial<IFormElementSpec> & Pick<IFormElementSpec, "key">;

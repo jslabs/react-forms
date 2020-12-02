@@ -2,13 +2,13 @@
     "homepage": "https://github.com/jslabs/react-forms",
     "author": "Seht <dev@hyx.net> (https://seht.dev/)",
     "name": "@jslabs/react-forms",
-    "version": "0.1.5-alpha.2",
+    "version": "0.1.5-alpha.3",
     "main": "dist/index.js",
     "keywords": [
         "framework",
         "react"
     ],
-    "description": "Abstract React forms with server-side JSON Schema validation support (Ajv)",
+    "description": "Abstract React forms with JSON Schema support (Ajv) including server-side validation and form generation support",
     "scripts": {
         "clean": "rm -rf dist",
         "build": "npm run clean && tsc"

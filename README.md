@@ -1,9 +1,10 @@
 # @jslabs/react-forms
 
-## Abstract React forms with server-side JSON Schema validation support (Ajv)
+## Abstract React forms with JSON Schema support (Ajv) including server-side validation and form generation support
 
-### Premilinary docs (example)
+### Premilinary docs (examples)
 
+### Ajv JSON Schema
 ```js
 // server/schemas/example.js
 module.exports = {
@@ -42,6 +43,57 @@ module.exports = {
 
 ```
 
+### Build a form directly from a Json Schema
+```js
+// @todo Default JSON Schema form generator implementation.
+function formFromJsonSchema(schema, state, context) {
+
+    const STRING_TYPES = {
+        "string": "text",
+        "email": "email",
+        // ...
+    };
+
+    const TEXT_AREA_LENGTH = 100;
+
+    const fields = {};
+
+    for (let key in schema) {
+
+        const schemaField = schema[key];
+
+        const field = {
+            element: 'input',
+            props: {},
+        };
+
+        if (schemaField.type in STRING_TYPES) {
+
+            if (schemaField.maxLength >= TEXT_AREA_LENGTH) {
+                field.element = 'textarea';
+            } else {
+                field.element = 'input';
+                field.props.type = STRING_TYPES[schemaField.type];
+            }
+        }
+
+        if (key in state) {
+            field.props.value = state[key];
+        }
+
+        field.label = key.replace('_', '');
+        field.label = field.label.charAt(0).toUpperCase() + field.label.slice(1);
+
+        fields[key] = field;
+
+    }
+
+    return fields;
+
+}
+```
+
+### Full power of an abstract form spec with hooks.
 ```js
 // ./schemas/ExampleForm.js
 import React from 'react';
@@ -171,7 +223,6 @@ export default {
             {
                 element: 'button',
                 props: {
-                    name: null,
                     type: 'button',
                     children: 'Decrease',
                 },
@@ -207,7 +258,6 @@ export default {
             {
                 element: 'button',
                 props: {
-                    name: null,
                     type: 'button',
                     children: 'Increase',
                 },
@@ -299,6 +349,7 @@ interface IFormManagerContext {
 }
 ```
 
+### Example form component implementation
 ```js
 // client
 import React, { useContext, useState } from 'react';
@@ -357,19 +408,21 @@ class ExampleForm extends React.Component {
     }
 
     render() {
+        
+        // Generated form from a JSON Schema.
+        // const formSchema = formFromJsonSchema(this.context.data.schema['properties'], this.state, this.context);
+
         const dispatch = (action) => {
             this.reducer(action);
         }
         return (
-            <Layout profile={this.state}>
-                <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
-                    <h3>Profile settings</h3>
-                    <FormManager.Provider value={{ state: this.state, setState: this.stateHandler, reducer: this.reducer, dispatch }}>
-                        <Form specs={formSchema} schema={this.context.data.schema['properties']} />
-                    </FormManager.Provider>
-                    <button type="submit">Submit</button>
-                </form>
-            </Layout>
+            <form method="POST" action={this.props.location.pathname} onSubmit={this.submitHandler}>
+                <h3>Profile settings</h3>
+                <FormManager.Provider value={{ state: this.state, setState: this.stateHandler, reducer: this.reducer, dispatch }}>
+                    <Form specs={formSchema} schema={this.context.data.schema['properties']} />
+                </FormManager.Provider>
+                <button type="submit">Submit</button>
+            </form>
         );
     }
 }
@@ -378,6 +431,7 @@ export default withRouter(ExampleForm);
 
 ```
 
+### Example server side schema serving and form validation
 ```js
 // server
 const express = require('express')
