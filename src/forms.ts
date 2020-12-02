@@ -5,6 +5,7 @@ interface IElementTypeMap {
 }
 
 // @todo Default JSON Schema form generator implementation.
+// @todo type hooks, name hooks options...
 export function JsonSchemaForm(schema: IFormDataSchema, state: IFormState, context: React.Context<any>) {
 
     const STRING_TYPES: IElementTypeMap = {
