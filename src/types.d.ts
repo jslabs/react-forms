@@ -1,10 +1,13 @@
+// import { JSONSchemaType } from "ajv"
+
+// declare namespace ReactForms {}
+
 interface IFormElementSpec {
     key: string;
     element: TElement;
-    group?: Array<IFormElementSpec>;
     factory?: TFormElementFactory;
     templates?: IFormElementTemplates;
-    schema?: IFormElementDataSchema;
+    schema?: IFormElementJsonSchema;
     props?: TElementProps;
     hooks?: Array<TFormElementHook>;
     label?: string;
@@ -14,16 +17,24 @@ interface IFormElementSpec {
     html?: React.ElementType;
 }
 
+interface IFormElementWithGroupSpec extends IFormElementSpec {
+    group?: Array<IFormGroupElementSpec>;
+}
+
+interface IFormGroupElementSpec extends IFormElementSpec {
+    groupKey: string;
+    index: number;
+}
+
 interface IFormSpec {
-    [key: string]: IFormElementSpec;
+    [key: string]: IFormElementWithGroupSpec;
 }
 
-interface IFormDataSchema {
-    // @todo Schemas types (Ajv)
-    [key: string]: IFormElementDataSchema;
+interface IFormJsonSchema {
+    [key: string]: IFormElementJsonSchema;
 }
 
-interface IFormElementDataSchema {
+interface IFormElementJsonSchema {
     [key: string]: any;
 }
 
@@ -44,8 +55,12 @@ interface IFormElementTemplates {
 }
 
 type TElement = React.ElementType;
-type TElementProps = React.PropsWithRef<any> | React.PropsWithChildren<any>;
+type TElementProps = React.PropsWithRef<any> & React.PropsWithChildren<any>;
 // type TInputElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
+// type TFormElementJsonSchema = JSONSchemaType<any>;
 type TFormElementHook = (spec: IFormElementSpec, context: IFormManagerContext) => void;
 type TFormElementFactory = (spec: IFormElementSpec, context: IFormManagerContext) => React.ReactNode;
+
+type TFormElementTemplateSpec = IFormElementSpec | IFormGroupElementSpec;
+type TFormGroupTemplateSpec = IFormElementWithGroupSpec | IFormGroupElementSpec;

@@ -36,7 +36,7 @@ export function FormElementFactory(spec: IFormElementSpec, context: IFormManager
 
 }
 
-export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormManagerContext) {
+export function FormElementGroupFactory(spec: IFormElementWithGroupSpec, context: IFormManagerContext) {
 
     if (!spec.templates) {
         spec.templates = { element: null, group: true };
@@ -46,15 +46,17 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
         spec.templates.group = ElementGroupTemplate;
     }
 
-    let elements = spec.group.map((element, index) => {
+    let elements = spec.group.map((element: IFormGroupElementSpec, index: number) => {
+
+        element.key = spec.key;
+        element.index = index;
+        element.groupKey = element.key + element.index;
 
         element.props = {
-            "name": spec.key,
+            "name": element.key,
             ...spec.props,
             ...element.props,
         }
-
-        element.key = (element.props.name || spec.key) + index;
 
         if (!element.templates) {
             element.templates = { element: null, group: false };
@@ -85,7 +87,7 @@ export function FormElementGroupFactory(spec: IFormElementSpec, context: IFormMa
             template = element.templates.group;
         }
 
-        props.key = element.key;
+        props.key = element.groupKey;
 
         return React.createElement(template, props, children);
 

@@ -4,7 +4,7 @@ export const node = (element: TElement, props: TElementProps, empty: boolean = f
     return (element && !("children" in props && !props.children && empty === false)) ? React.createElement(element, props) : null;
 }
 
-export function ElementGroupTemplate({ children, spec }: { children: React.ReactChildren, spec: IFormElementSpec }) {
+export function ElementGroupTemplate({ children, spec }: { children: React.ReactChildren, spec: TFormGroupTemplateSpec }) {
     return (
         <div>
             {children}
@@ -12,9 +12,9 @@ export function ElementGroupTemplate({ children, spec }: { children: React.React
     );
 }
 
-export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
+export function InputTemplate({ spec }: { spec: TFormElementTemplateSpec }) {
     if (spec.label && !spec.props.id) {
-        spec.props.id = spec.key;
+        spec.props.id = ("groupKey" in spec) ? spec.groupKey : spec.key;
     }
     return (
         <React.Fragment>
@@ -26,7 +26,7 @@ export function InputTemplate({ spec }: { spec: IFormElementSpec }) {
     );
 }
 
-export function HtmlTemplate({ spec }: { spec: IFormElementSpec }) {
+export function HtmlTemplate({ spec }: { spec: TFormElementTemplateSpec }) {
     return (
         <React.Fragment>
             {node(spec.html, { spec })}

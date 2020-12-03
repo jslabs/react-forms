@@ -6,7 +6,7 @@ interface IElementTypeMap {
 
 // @todo Default JSON Schema form generator implementation.
 // @todo type hooks, name hooks options...
-export function JsonSchemaForm(schema: IFormDataSchema, state: IFormState, context: React.Context<any>) {
+export function JsonSchemaForm(schema: IFormJsonSchema, state: IFormState, context: React.Context<any>) {
 
     const STRING_TYPES: IElementTypeMap = {
         "string": "text",
@@ -24,16 +24,16 @@ export function JsonSchemaForm(schema: IFormDataSchema, state: IFormState, conte
 
         const spec: IFormElementSpec = {
             key,
-            element: 'input',
+            element: "input",
             props: {},
         };
 
         if (schemaSpec.type in STRING_TYPES) {
 
             if (schemaSpec.maxLength >= TEXT_AREA_LENGTH) {
-                spec.element = 'textarea';
+                spec.element = "textarea";
             } else {
-                spec.element = 'input';
+                spec.element = "input";
                 spec.props.type = STRING_TYPES[schemaSpec.type];
             }
         }
@@ -42,7 +42,7 @@ export function JsonSchemaForm(schema: IFormDataSchema, state: IFormState, conte
             spec.props.value = state[key];
         }
 
-        spec.label = key.replace('_', '');
+        spec.label = key.replace("_", "");
         spec.label = spec.label.charAt(0).toUpperCase() + spec.label.slice(1);
 
         specs[key] = spec;

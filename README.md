@@ -1,6 +1,6 @@
 # @jslabs/react-forms
 
-## Abstract React forms with JSON Schema support (Ajv) including server-side validation and form generation support
+## Abstract React forms with JSON Schema support (Ajv) including form generation and server-side validation.
 
 ### Premilinary docs (examples)
 
@@ -327,25 +327,28 @@ export default {
 // Form elements options
 interface IFormElementSpec {
     key: string;
-    group: Array<IFormElementSpec>;
-    element: React.ElementType;
-    factory: TFormElementFactory;
-    templates: IFormTemplates;
-    schema: IFormElementDataSchema;
-    props: React.PropsWithChildren<any>;
-    hooks: Array<THook>;
-    label: string;
-    data: any;
-    prepend: React.ElementType;
-    append: React.ElementType;
-    html: React.ElementType;
+    element: TElement;
+    factory?: TFormElementFactory;
+    templates?: IFormElementTemplates;
+    schema?: IFormElementJsonSchema;
+    props?: TElementProps;
+    hooks?: Array<TFormElementHook>;
+    label?: string;
+    data?: any;
+    prepend?: React.ElementType;
+    append?: React.ElementType;
+    html?: React.ElementType;
+}
+
+interface IFormElementWithGroupSpec extends IFormElementSpec {
+    group?: Array<IFormGroupElementSpec>;
 }
 // Form manager context
 interface IFormManagerContext {
-    state: React.ComponentState;
-    setState: React.SetStateAction<React.ComponentState>;
-    reducer: React.Reducer<React.ComponentState, React.ReducerAction<any>>;
-    dispatch: React.Dispatch<React.ReducerAction<any>>;
+    state?: React.ComponentState;
+    setState?: React.SetStateAction<React.ComponentState>;
+    reducer?: React.Reducer<React.ComponentState, React.ReducerAction<any>>;
+    dispatch?: React.Dispatch<React.ReducerAction<any>>;
 }
 ```
 

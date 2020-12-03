@@ -2,7 +2,7 @@ import * as React from "react";
 import FormManager from "./FormManager";
 import { FormElementFactory, FormElementGroupFactory } from "./elements";
 
-export function Form({ specs, schema }: { specs: IFormSpec, schema: IFormDataSchema }): React.ReactNode {
+export function Form({ specs, schema }: { specs: IFormSpec, schema: IFormJsonSchema }): React.ReactNode {
     return (
         <FormManager.Consumer>
             {context => {
